@@ -1,0 +1,27 @@
+name: Create a Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: "Tagged Pre Release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: shasum VERSION
+        run: shasum -a 256 src/cli/VERSION.txt > src/cli/VERSION.sha256
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: true
+          prerelease: false
+          files: |
+            src/cli/VERSION.txt
+            src/cli/VERSION.sha256
